@@ -2,8 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import pandas as pd
-from openpyxl import Workbook
-from openpyxl.styles import PatternFill
+import xlwt
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -83,9 +82,21 @@ def fetch_and_process_data():
         # Obtener la fecha de hoy
         today = datetime.today().strftime('%d-%m-%Y')
 
-        # Crear un archivo Excel sin las cabeceras
-        file_name = f'mercado_continuo_{today}.xlsx'
-        df_styled.to_excel(file_name, index=False, header=False)
+        # Crear un archivo Excel en formato XLS usando xlwt
+        file_name = f'mercado_continuo_{today}.xls'
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet('Mercado Continuo')
+
+        # Escribir los datos en el archivo XLS
+        for i, col in enumerate(df.columns):
+            sheet.write(0, i, col)
+        
+        for i, row in enumerate(df.values, start=1):
+            for j, val in enumerate(row):
+                sheet.write(i, j, val)
+
+        # Guardar el archivo XLS
+        workbook.save(file_name)
 
         return file_name, omitted_rows, today
 
