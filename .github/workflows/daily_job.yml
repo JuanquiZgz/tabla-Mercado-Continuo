@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Si tienes un archivo de requisitos
+          pip install selenium openpyxl pandas
 
       - name: Run script
         run: python tableValoresyBolsa.py
