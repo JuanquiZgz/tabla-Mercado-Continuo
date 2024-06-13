@@ -3,6 +3,11 @@ name: Daily Job
 on:
   schedule:
     - cron: '0 18 * * 1-5'
+  workflow_dispatch:  # Permitir la ejecución manual
+    inputs:
+      message:
+        description: 'Mensaje opcional para la ejecución manual'
+        required: false
 
 jobs:
   run_job:
