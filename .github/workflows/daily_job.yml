@@ -2,7 +2,7 @@ name: Daily Job
 
 on:
   schedule:
-    - cron: '0 18 * * 1-5'
+    - cron: '0 17 * * 1-5'
   workflow_dispatch:  # Permitir la ejecución manual
     inputs:
       message:

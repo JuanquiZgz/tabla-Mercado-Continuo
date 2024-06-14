@@ -77,8 +77,11 @@ def fetch_and_process_data():
         # Convertir la columna '% Dif.' a float, manejando los guiones
         df['% Dif.'] = pd.to_numeric(df['% Dif.'].str.replace('%', '').str.replace(',', '.'), errors='coerce')
 
+        # Convertir los valores de la columna '% Dif.' a strings con el símbolo '%'
+        df['% Dif.'] = df['% Dif.'].apply(lambda x: f"{x:.2f}%" if pd.notnull(x) else '-')
+
         # Aplicar formato de color a la columna '% Dif.'
-        df_styled = df.style.applymap(color_green_red, subset=['% Dif.'])
+        df_styled = df.style.applymap(color_green_red_with_symbol, subset=['% Dif.'])
 
         # Obtener la fecha de hoy
         today = datetime.today().strftime('%d-%m-%Y')
@@ -97,18 +100,19 @@ def fetch_and_process_data():
         if driver:
             driver.quit()
 
-def color_green_red(val):
+def color_green_red_with_symbol(val):
     color = 'black'
-    if isinstance(val, float):
-        if val > 0:
+    if isinstance(val, str) and '%' in val:
+        val_num = float(val.replace('%', ''))
+        if val_num > 0:
             color = 'green'
-        elif val < 0:
+        elif val_num < 0:
             color = 'red'
     return f'color: {color};'
 
 def send_email(file_name, omitted_rows, today):
     from_address = 'jczaragozatomas@gmail.com'
-    to_address = 'jczaragozatomas@gmail.com'
+    to_address = 'laura.deluis@diariodelaltoaragon.es'
     subject = f'Datos del Mercado Continuo - {today}'
     body = 'Adjunto encontrarás los datos del Mercado Continuo.\n\nLas siguientes filas no se incluyeron por estar suspendidas:\n\n'
 
