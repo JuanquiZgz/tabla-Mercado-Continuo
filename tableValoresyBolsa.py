@@ -92,7 +92,7 @@ def fetch_and_process_data():
         today = datetime.today().strftime('%d-%m-%Y')
 
         # Crear un archivo Excel sin las cabeceras
-        file_name = f'mercado_continuo_{today}.xlsx'
+        file_name = f'{today}_mercado_continuo.xlsx'
         df_styled.to_excel(file_name, index=False, header=False)
 
         return file_name, omitted_rows, today
