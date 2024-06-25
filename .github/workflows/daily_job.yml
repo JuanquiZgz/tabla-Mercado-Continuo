@@ -3,10 +3,10 @@ name: Daily Job
 on:
   schedule:
     - cron: '17 16 * * 1-5'
-  workflow_dispatch:  # Permitir la ejecución manual
+  workflow_dispatch:
     inputs:
       message:
-        description: 'Mensaje opcional para la ejecución manual'
+        description: 'Para posibles pruebas manuales en el GitHub Action'
         required: false
 
 jobs:
