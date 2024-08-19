@@ -2,7 +2,7 @@ name: Keep Repository Active
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # Ejecutar cada domingo a medianoche
+    - cron: '0 0 * * 0' 
 
 jobs:
   keep-active:
@@ -10,7 +10,10 @@ jobs:
     steps:
       - name: Hacer un commit vacío
         run: |
-          git config --global user.email "jczaragoza@hotmail.es"
-          git config --global user.name "JuanquiZgz"
-          git commit --allow-empty -m "Mantener actividad"
-          git push
+          if [ "$(date +%d)" -le 07 ]; then
+            git config --global user.email "jczaragoza@hotmail.es"
+            git config --global user.name "JuanquiZgz"
+            git commit --allow-empty -m "Mantener actividad"
+            git push
+          else
+            echo "No es el primer domingo del mes, no se realizará ningún commit."
