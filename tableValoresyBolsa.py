@@ -83,6 +83,14 @@ def fetch_and_process_data():
         # Aplicar formato de color a la columna '% Dif.'
         df_styled = df.style.applymap(color_green_red_with_symbol, subset=['% Dif.'])
 
+         # Formatear las columnas "Volumen" y "Efectivo (miles €)"
+        for col in ["Volumen", "Efectivo (miles €)"]:
+            df[col] = pd.to_numeric(df[col].str.replace('.', '').str.replace(',', '.'), errors='coerce')
+            df[col] = df[col].apply(lambda x: '{:.2f}'.format(x).rstrip('0').rstrip('.') if pd.notnull(x) else '-')
+            
+            # Convertir los puntos decimales a comas
+            df[col] = df[col].str.replace('.', ',')
+
        # Formatear las columnas "Último", "Máximo" y "Mínimo" como moneda
         for col in ["Último", "Máximo", "Mínimo"]:
             df[col] = pd.to_numeric(df[col].str.replace(',', '.'), errors='coerce')
