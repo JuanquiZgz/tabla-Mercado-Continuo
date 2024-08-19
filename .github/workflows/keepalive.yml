@@ -1,0 +1,16 @@
+name: Keep Repository Active
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Ejecutar cada domingo a medianoche
+
+jobs:
+  keep-active:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hacer un commit vacío
+        run: |
+          git config --global user.email "jczaragoza@hotmail.es"
+          git config --global user.name "JuanquiZgz"
+          git commit --allow-empty -m "Mantener actividad"
+          git push
