@@ -74,27 +74,29 @@ def fetch_and_process_data():
         if 'Fecha' in df.columns and 'Hora' in df.columns:
             df = df.drop(columns=['Fecha', 'Hora'])
 
-        # Convertir la columna '% Dif.' a float, manejando los guiones
-        df['% Dif.'] = pd.to_numeric(df['% Dif.'].str.replace('%', '').str.replace(',', '.'), errors='coerce')
+        # Convertir columnas numéricas
+        df['Último'] = df['Último'].apply(convert_to_float)
+        df['Máximo'] = df['Máximo'].apply(convert_to_float)
+        df['Mínimo'] = df['Mínimo'].apply(convert_to_float)
 
-        # Convertir los valores de la columna '% Dif.' a strings con el símbolo '%'
-        df['% Dif.'] = df['% Dif.'].apply(lambda x: f"{x:.2f}%" if pd.notnull(x) else '-')
+        # Convertir la columna '% Dif.' a float después de eliminar el símbolo '%' y cambiar la coma por punto
+        df['% Dif.'] = df['% Dif.'].str.replace(',', '.').str.replace('%', '').astype(float)
 
+        # Convertir de vuelta a string y cambiar el punto por coma para presentación
+        df['% Dif.'] = df['% Dif.'].apply(lambda x: f"{x:.2f}".replace('.', ',') if pd.notnull(x) else '-')
+        
         # Aplicar formato de color a la columna '% Dif.'
         df_styled = df.style.applymap(color_green_red_with_symbol, subset=['% Dif.'])
 
-         # Formatear las columnas "Volumen" y "Efectivo (miles €)"
+        # Formatear las columnas "Volumen" y "Efectivo (miles €)"
         for col in ["Volumen", "Efectivo (miles €)"]:
             df[col] = pd.to_numeric(df[col].str.replace('.', '').str.replace(',', '.'), errors='coerce')
-            df[col] = df[col].apply(lambda x: '{:.2f}'.format(x).rstrip('0').rstrip('.') if pd.notnull(x) else '-')
-            
-            # Convertir los puntos decimales a comas
+            df[col] = df[col].apply(lambda x: '{:,.2f}'.format(x).rstrip('0').rstrip('.') if pd.notnull(x) else '-')
             df[col] = df[col].str.replace('.', ',')
 
-       # Formatear las columnas "Último", "Máximo" y "Mínimo" como moneda
+        # Formatear las columnas "Último", "Máximo" y "Mínimo" como moneda, usando coma como separador decimal
         for col in ["Último", "Máximo", "Mínimo"]:
-            df[col] = pd.to_numeric(df[col].str.replace(',', '.'), errors='coerce')
-            df[col] = df[col].apply(lambda x: '{:,.4f}'.format(x).rstrip('0').rstrip('.') if pd.notnull(x) else '-')
+            df[col] = df[col].apply(lambda x: '{:,.4f}'.format(x).replace('.', ',').rstrip('0').rstrip(',') if pd.notnull(x) else '-')
 
         # Obtener la fecha de hoy
         today = datetime.today().strftime('%d-%m-%Y')
@@ -112,6 +114,15 @@ def fetch_and_process_data():
     finally:
         if driver:
             driver.quit()
+
+def convert_to_float(value):
+    """Función para convertir una cadena con coma decimal a un número float."""
+    try:
+        # Reemplazar coma por punto para la conversión
+        return float(value.replace(',', '.'))
+    except (ValueError, AttributeError):
+        # Devolver NaN si no se puede convertir a float
+        return float('nan')
 
 def color_green_red_with_symbol(val):
     color = 'black'
