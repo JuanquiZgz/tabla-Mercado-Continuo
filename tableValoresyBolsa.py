@@ -79,22 +79,20 @@ def fetch_and_process_data():
         df['Máximo'] = df['Máximo'].apply(convert_to_float)
         df['Mínimo'] = df['Mínimo'].apply(convert_to_float)
 
-        # Convertir la columna '% Dif.' a float después de eliminar el símbolo '%' y cambiar la coma por punto
-        df['% Dif.'] = df['% Dif.'].str.replace(',', '.').str.replace('%', '').astype(float)
+        # Limpiar y convertir la columna '% Dif.' a float
+        df['% Dif.'] = df['% Dif.'].apply(clean_and_convert_percentage)
 
-        # Convertir de vuelta a string y cambiar el punto por coma para presentación
-        df['% Dif.'] = df['% Dif.'].apply(lambda x: f"{x:.2f}".replace('.', ',') if pd.notnull(x) else '-')
-        
-        # Aplicar formato de color a la columna '% Dif.'
-        df_styled = df.style.applymap(color_green_red_with_symbol, subset=['% Dif.'])
+        # Convertir de vuelta a string con el símbolo '%' y el formato adecuado
+        df['% Dif.'] = df['% Dif.'].apply(format_as_percentage)
 
         # Formatear las columnas "Volumen" y "Efectivo (miles €)"
         for col in ["Volumen", "Efectivo (miles €)"]:
+            # Reemplaza el separador de miles y el separador decimal para conversión a float
             df[col] = pd.to_numeric(df[col].str.replace('.', '').str.replace(',', '.'), errors='coerce')
-            df[col] = df[col].apply(lambda x: '{:,.2f}'.format(x).rstrip('0').rstrip('.') if pd.notnull(x) else '-')
-            df[col] = df[col].str.replace('.', ',')
+            # Aplica el formato de moneda
+            df[col] = df[col].apply(format_as_currency)
 
-        # Formatear las columnas "Último", "Máximo" y "Mínimo" como moneda, usando coma como separador decimal
+       # Formatear las columnas "Último", "Máximo" y "Mínimo" como moneda, usando coma como separador decimal
         for col in ["Último", "Máximo", "Mínimo"]:
             df[col] = df[col].apply(lambda x: '{:,.4f}'.format(x).replace('.', ',').rstrip('0').rstrip(',') if pd.notnull(x) else '-')
 
@@ -103,7 +101,7 @@ def fetch_and_process_data():
 
         # Crear un archivo Excel sin las cabeceras
         file_name = f'{today}_mercado_continuo.xlsx'
-        df_styled.to_excel(file_name, index=False, header=False)
+        df.to_excel(file_name, index=False, header=False)
 
         return file_name, omitted_rows, today
 
@@ -115,6 +113,45 @@ def fetch_and_process_data():
         if driver:
             driver.quit()
 
+def clean_and_convert_percentage(value):
+    """Limpia el valor eliminando el símbolo '%' y cambia la coma por punto para la conversión a float."""
+    if pd.notnull(value):
+        try:
+            # Eliminar el símbolo '%' y reemplazar la coma por punto
+            value = value.replace('%', '').replace(',', '.')
+            # Convertir el valor a float
+            return float(value)
+        except (ValueError, TypeError):
+            return float('nan')
+    return float('nan')
+
+def format_as_percentage(value):
+    """Formatea los valores de porcentaje con el símbolo '%' y usando coma como separador decimal."""
+    if pd.notnull(value) and not pd.isna(value):
+        try:
+            # Formatear el número como porcentaje con dos decimales
+            return f"{value:.2f}".replace('.', ',') + '%'
+        except (ValueError, TypeError) as e:
+            print(f"Error al formatear el valor '{value}': {e}")
+            return '-'
+    return '-'
+
+def format_as_currency(value):
+    """Formatea los valores como moneda, usando coma como separador decimal y sin separadores de miles."""
+    if pd.notnull(value):
+        try:
+            # Convertir el valor a float
+            num = float(value)
+            # Formatear el número con dos decimales y sin separador de miles
+            formatted = '{:.2f}'.format(num).replace('.', ',')  # Reemplaza el punto decimal por coma
+            # Asegurar que no haya comas para los miles si el número es entero
+            if num.is_integer():
+                formatted = formatted.replace(',00', '')  # Eliminar ',00' si el número es entero
+            return formatted
+        except (ValueError, TypeError):
+            return '-'
+    return '-'
+
 def convert_to_float(value):
     """Función para convertir una cadena con coma decimal a un número float."""
     try:
@@ -124,19 +161,9 @@ def convert_to_float(value):
         # Devolver NaN si no se puede convertir a float
         return float('nan')
 
-def color_green_red_with_symbol(val):
-    color = 'black'
-    if isinstance(val, str) and '%' in val:
-        val_num = float(val.replace('%', ''))
-        if val_num > 0:
-            color = 'green'
-        elif val_num < 0:
-            color = 'red'
-    return f'color: {color};'
-
 def send_email(file_name, omitted_rows, today):
     from_address = 'jczaragozatomas@gmail.com'
-    to_address = 'laura.deluis@diariodelaltoaragon.es'
+    to_address = 'jczaragozatomas@gmail.com'
     subject = f'Datos del Mercado Continuo - {today}'
     body = 'Adjunto encontrarás los datos del Mercado Continuo.\n\nLas siguientes filas no se incluyeron por estar suspendidas:\n\n'
 
