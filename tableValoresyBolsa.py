@@ -163,7 +163,7 @@ def convert_to_float(value):
 
 def send_email(file_name, omitted_rows, today):
     from_address = 'jczaragozatomas@gmail.com'
-    to_address = 'jczaragozatomas@gmail.com'
+    to_address = 'laura.deluis@diariodelaltoaragon.es'
     subject = f'Datos del Mercado Continuo - {today}'
     body = 'Adjunto encontrarás los datos del Mercado Continuo.\n\nLas siguientes filas no se incluyeron por estar suspendidas:\n\n'
 
