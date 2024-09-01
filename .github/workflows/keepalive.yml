@@ -16,26 +16,12 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v3
 
-      - name: Configurar Git
-        run: |
-          git config --global user.email "jczaragoza@hotmail.es"
-          git config --global user.name "JuanquiZgz"
+      - name: Configurar permisos del script
+        run: chmod +x scripts/keep-active.sh
 
-      - name: Configurar URL del remoto
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.REPO_ACCESS_TOKEN }}@github.com/${{ github.repository }}.git
-
-      - name: Hacer un commit vacío solo si es el primer domingo del mes
-        run: |
-          # Obtener el día del mes (1-31)
-          day_of_month=$(date +%d)
-          
-          # Comprobar si es el primer domingo del mes (1-7)
-          if [ "$day_of_month" -le 07 ]; then
-            git commit --allow-empty -m "Mantener actividad"
-            git push
-          else
-            echo "No es el primer domingo del mes, no se realizará ningún commit."
-
+      - name: Ejecutar script de mantener activo
+        run: ./scripts/keep-active.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
 
