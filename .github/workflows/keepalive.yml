@@ -16,7 +16,7 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }} # Usa el token de GitHub Actions
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
 
       - name: Configurar permisos del script
         run: chmod +x scripts/keep-active.sh
@@ -24,5 +24,5 @@ jobs:
       - name: Ejecutar script de mantener activo
         run: ./scripts/keep-active.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} # Usa el token de GitHub Actions
+          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
