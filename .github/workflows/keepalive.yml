@@ -26,6 +26,5 @@ jobs:
       - name: Ejecutar script de mantener activo
         run: ./scripts/keep-active.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} # Usar el secreto configurado
-
+          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
