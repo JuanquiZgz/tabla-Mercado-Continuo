@@ -2,12 +2,7 @@ name: Keep Repository Active
 
 on:
   schedule:
-    - cron: '0 0 * * 0'
-  workflow_dispatch:
-    inputs:
-      message:
-        description: 'Para posibles pruebas manuales en el GitHub Action'
-        required: false
+    - cron: '0 0 * * 0'  # This runs every Sunday at midnight
 
 jobs:
   keep-active:
@@ -23,3 +18,4 @@ jobs:
             git push
           else
             echo "No es el primer domingo del mes, no se realizará ningún commit."
+        shell: bash
