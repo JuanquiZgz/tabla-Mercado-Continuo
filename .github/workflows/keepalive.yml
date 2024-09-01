@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check if it's the first Sunday of the month
+        shell: bash
         run: |
           day_of_month=$(date +%d)
           if [ "$day_of_month" -le 07 ]; then
@@ -23,4 +24,3 @@ jobs:
             git push
           else
             echo "No es el primer domingo del mes, no se realizará ningún commit."
-        shell: bash
