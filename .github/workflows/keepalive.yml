@@ -13,10 +13,12 @@ jobs:
   keep-active:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if it's the first Sunday of the month
+      - name: Hacer un commit vacío solo si es el primer domingo del mes
         shell: bash
         run: |
+          # Obtener el día del mes (1-31)
           day_of_month=$(date +%d)
+          # Comprobar si es el primer domingo del mes (1-7)
           if [ "$day_of_month" -le 07 ]; then
             git config --global user.email "jczaragoza@hotmail.es"
             git config --global user.name "JuanquiZgz"
