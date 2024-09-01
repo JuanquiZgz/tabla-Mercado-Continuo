@@ -17,10 +17,11 @@ jobs:
         run: ls -la
 
       - name: Configurar permisos del script
-        run: chmod +x ./scripts/keep-active.sh
+        run: chmod +x scripts/keep-active.sh
 
       - name: Ejecutar script para mantener el repositorio activo
-        run: ./scripts/keep-active.sh
+        run: scripts/keep-active.sh
+
 
 
 
