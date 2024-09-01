@@ -13,8 +13,16 @@ jobs:
   keep-active:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
       - name: Verificar archivos en el directorio raíz
         run: ls -la
+
+      - name: Verificar archivos en subcarpetas del directorio raíz
+        run: |
+          echo "Verificando subdirectorios..."
+          find . -type d -exec echo "Directorio: {}" \; -exec ls -la {} \;
 
       - name: Configurar permisos del script
         run: chmod +x scripts/keep-active.sh
