@@ -13,8 +13,8 @@ jobs:
   keep-active:
     runs-on: ubuntu-latest
     steps:
-      - name: Verificar archivos en el directorio scripts
-        run: ls -la scripts
+      - name: Verificar archivos en el directorio raíz
+        run: ls -la
 
       - name: Configurar permisos del script
         run: chmod +x scripts/keep-active.sh
