@@ -13,6 +13,12 @@ jobs:
   keep-active:
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar archivos en el directorio
+        run: ls -la
+
+      - name: Configurar permisos del script
+        run: chmod +x ./keep-active.sh
+
       - name: Ejecutar script para mantener el repositorio activo
         run: ./keep-active.sh
 
