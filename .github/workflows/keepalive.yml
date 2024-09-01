@@ -15,16 +15,14 @@ jobs:
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }} # Usa el token de GitHub Actions
 
       - name: Configurar permisos del script
         run: chmod +x scripts/keep-active.sh
 
-      - name: Configurar URL del remoto
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.REPO_ACCESS_TOKEN }}@github.com/${{ github.repository }}.git
-
       - name: Ejecutar script de mantener activo
         run: ./scripts/keep-active.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} # Usa el token de GitHub Actions
 
